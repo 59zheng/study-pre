@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>study-pre</artifactId>
+        <groupId>org.example</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>zrpc</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>zrpc-core</module>
+        <module>zrpc-server</module>
+        <module>zrpc-client</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <zkclient.version>0.1</zkclient.version>
+        <protostuff.version>1.6.0</protostuff.version>
+        <guava.version>19.0</guava.version>
+        <objenesis.version>2.6</objenesis.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- zookeeper客户端组件依赖 -->
+            <dependency>
+                <groupId>com.github.sgroschupf</groupId>
+                <artifactId>zkclient</artifactId>
+                <version>${zkclient.version}</version>
+            </dependency>
+
+            <!-- 实例化组件依赖 -->
+            <dependency>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>${objenesis.version}</version>
+            </dependency>
+
+            <!-- protostuff 核心依赖 -->
+            <!--基于google protobuf的工具类 protostuff-->
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-core</artifactId>
+                <version>${protostuff.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.protostuff</groupId>
+                <artifactId>protostuff-runtime</artifactId>
+                <version>${protostuff.version}</version>
+            </dependency>
+
+            <!-- Google Guava 核心扩展库  cache -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+
+
+        </dependencies>
+
+    </dependencyManagement>
+
+
+</project>
