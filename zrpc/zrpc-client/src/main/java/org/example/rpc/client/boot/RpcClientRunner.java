@@ -21,6 +21,7 @@ public class RpcClientRunner {
      * 3,基于netty编写客户端
      */
     public void start() {
+
         serviceDiscovery.serviceDiscovery();
 
     }

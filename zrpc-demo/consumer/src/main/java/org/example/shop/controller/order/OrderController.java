@@ -28,6 +28,7 @@ public class OrderController {
      */
     @GetMapping("/getOrder")
     public String getOrder(String userId, String orderNo) {
+        System.out.println("1111 ");
         return orderService.getOrder(userId, orderNo);
     }
 

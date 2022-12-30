@@ -1,6 +1,7 @@
 package org.example.rpc.netty.handler;
 
 import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.json.JSONUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -27,9 +28,10 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest request) throws Exception {
         RpcResponse rpcResponse = new RpcResponse();
+        log.info("server receive  msg {}", JSONUtil.toJsonStr(request));
 
         try {
-            Object bean = SpringUtil.getBean(request.getClassName());
+             Object bean = SpringUtil.getBean(Class.forName(request.getClassName()));
 
             //reflect invoke 反射代理
             Method method = bean.getClass().getMethod(request.getMethodName(), request.getParameterTypes());
@@ -44,9 +46,15 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
             log.error("rpc server invoke error msg{}", e.getMessage());
             throw new RuntimeException(e);
         } finally {
+            log.info("server reponse  msg {}", JSONUtil.toJsonStr(rpcResponse));
+
             ctx.channel().writeAndFlush(rpcResponse);
         }
 
 
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
     }
 }

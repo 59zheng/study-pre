@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.example.rpc.server.boot.RpcServer;
@@ -22,6 +23,8 @@ import org.example.rpc.server.config.RpcServerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.net.InetSocketAddress;
 
 /**
  * @Author yanzheng
@@ -39,22 +42,23 @@ public class NettyServer implements RpcServer {
     public void start() {
 
         NioEventLoopGroup boss = new NioEventLoopGroup(1, new DefaultThreadFactory("boos"));
-        NioEventLoopGroup worker = new NioEventLoopGroup(1, new DefaultThreadFactory("worker"));
-        NioEventLoopGroup business = new NioEventLoopGroup(1, new DefaultThreadFactory("business"));
+        NioEventLoopGroup worker = new NioEventLoopGroup(0, new DefaultThreadFactory("worker"));
+        NioEventLoopGroup business = new NioEventLoopGroup(NettyRuntime.availableProcessors() * 2, new DefaultThreadFactory("business"));
 
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
         RpcRequestHandler rpcRequestHandler = new RpcRequestHandler();
         serverBootstrap
                 .group(boss, worker)
-                .handler(new LoggingHandler(LogLevel.INFO))
                 .channel(NioServerSocketChannel.class)
+                .handler(new LoggingHandler(LogLevel.INFO))
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast(new LoggingHandler(LogLevel.INFO));
 
                         pipeline.addLast("frameEncoder", new FrameEncoder());
                         pipeline.addLast("rpcResponseEncoder", new RpcResponseEncoder());
@@ -69,23 +73,21 @@ public class NettyServer implements RpcServer {
                     }
                 });
         try {
-            ChannelFuture channelFuture = serverBootstrap.bind(configuration.getRpcPort()).sync();
+            ChannelFuture future = serverBootstrap.bind(new InetSocketAddress(configuration.getRpcPort())).sync();
             log.info("rpc server started on port ={}", configuration.getRpcPort());
-
-            channelFuture.channel().closeFuture().addListener((f) -> {
-                throw new InterruptedException("sss");
+            // 阻塞等待监听关闭
+            future.channel().closeFuture().addListener((f) -> {
+                boss.shutdownGracefully();
+                worker.shutdownGracefully();
+                business.shutdownGracefully();
             });
 
         } catch (InterruptedException e) {
+            e.printStackTrace();
 
             boss.shutdownGracefully();
             worker.shutdownGracefully();
             business.shutdownGracefully();
-            if (!StringUtils.isEmpty(e.getLocalizedMessage())) {
-
-                throw new RuntimeException(e);
-
-            }
         }
 
     }

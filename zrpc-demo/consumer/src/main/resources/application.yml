@@ -12,7 +12,7 @@ rpc:
       root: /rpc
       addr: 43.138.86.137:2181
       switch: true
-      timeout: 10000
+      timeout: 1000
     api:
       package: org.example.api
   cluster:
