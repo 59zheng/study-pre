@@ -1,0 +1,17 @@
+<configuration>
+
+    <!--1.配置数据库信息-->
+    <dataSource>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://43.138.86.137:3306/study?characterEncoding=utf-8"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </dataSource>
+
+    <!--2.引入映射配置文件-->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+    </mappers>
+
+
+</configuration>

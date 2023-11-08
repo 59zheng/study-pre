@@ -9,17 +9,27 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
+
     <modules>
         <module>netty-demo</module>
         <module>zrpc</module>
         <module>zrpc-demo</module>
+        <module>jdk-basic</module>
+        <module>hailtaxi-parent</module>
+        <module>springcloud-alibaba-demo</module>
+        <module>mybatis-demo</module>
+        <module>mybatis-demo/ipersistent</module>
+        <module>mybatis-demo/ipersistent_test</module>
+        <module>nacos-client-demo</module>
+        <module>sharding-jdbc-demo</module>
+        <module>leetcode-test</module>
     </modules>
 
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <spring-boot.version>2.7.0</spring-boot.version>
+        <spring-boot.version>2.6.13</spring-boot.version>
     </properties>
 
 
@@ -40,6 +50,9 @@
                 </exclusions>
             </dependency>
 
+            <!-- spring cloud-->
+
+
 
             <dependency>
                 <groupId>io.netty</groupId>
@@ -55,6 +68,12 @@
                 <optional>true</optional>
             </dependency>
 
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.51</version>
+            </dependency>
 
             <dependency>
                 <groupId>cn.hutool</groupId>
